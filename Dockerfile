@@ -1,44 +1,26 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Use Node.js 20 as the base image
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies)
+# Install all dependencies (dev dependencies needed for build AND runtime)
 RUN npm ci
 
-# Copy project files
+# Copy all project files
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS production
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
-
-# Copy theme file
-COPY theme.json ./
+# Add an environment variable to indicate production
+ENV NODE_ENV=production
 
 # Expose the port the app runs on
 EXPOSE 5000
-
-# Set NODE_ENV environment variable
-ENV NODE_ENV=production
 
 # Start the application
 CMD ["npm", "start"]
