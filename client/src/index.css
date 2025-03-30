@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy-blue: #002366;
+  --teal: #008080;
+  --orange: #FF6B35;
+  --light-gray: #f5f7fa;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-light-gray text-gray-800;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-navy-blue font-bold;
+  }
+}
+
+/* Custom colors */
+.bg-navy-blue {
+  background-color: var(--navy-blue);
+}
+
+.bg-teal {
+  background-color: var(--teal);
+}
+
+.bg-orange {
+  background-color: var(--orange);
+}
+
+.bg-light-gray {
+  background-color: var(--light-gray);
+}
+
+.text-navy-blue {
+  color: var(--navy-blue);
+}
+
+.text-teal {
+  color: var(--teal);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.hover\:bg-orange\/90:hover {
+  background-color: rgba(255, 107, 53, 0.9);
+}
+
+.hover\:text-teal:hover {
+  color: var(--teal);
+}
