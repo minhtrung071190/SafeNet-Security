@@ -1,11 +1,4 @@
-import { 
-  users, 
-  waitlistEntries, 
-  type User, 
-  type InsertUser,
-  type WaitlistEntry,
-  type InsertWaitlist
-} from "@shared/schema";
+import { users, type User, type InsertUser, consultationRequests, type ConsultationRequest, type InsertConsultationRequest } from "@shared/schema";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -14,22 +7,21 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  addWaitlistEntry(entry: InsertWaitlist & { createdAt: string }): Promise<WaitlistEntry>;
-  getWaitlistEntries(): Promise<WaitlistEntry[]>;
-  getWaitlistEntryByEmail(email: string): Promise<WaitlistEntry | undefined>;
+  createConsultationRequest(request: InsertConsultationRequest): Promise<ConsultationRequest>;
+  getConsultationRequests(): Promise<ConsultationRequest[]>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private waitlist: Map<number, WaitlistEntry>;
-  userCurrentId: number;
-  waitlistCurrentId: number;
+  private consultationRequests: Map<number, ConsultationRequest>;
+  currentUserId: number;
+  currentConsultationId: number;
 
   constructor() {
     this.users = new Map();
-    this.waitlist = new Map();
-    this.userCurrentId = 1;
-    this.waitlistCurrentId = 1;
+    this.consultationRequests = new Map();
+    this.currentUserId = 1;
+    this.currentConsultationId = 1;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -43,37 +35,21 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userCurrentId++;
+    const id = this.currentUserId++;
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
   }
-  
-  async addWaitlistEntry(entry: InsertWaitlist & { createdAt: string }): Promise<WaitlistEntry> {
-    // Check if email already exists in waitlist
-    const existingEntry = await this.getWaitlistEntryByEmail(entry.email);
-    if (existingEntry) {
-      throw new Error('Email already registered in waitlist');
-    }
-    
-    const id = this.waitlistCurrentId++;
-    const waitlistEntry: WaitlistEntry = { 
-      ...entry, 
-      id,
-    };
-    
-    this.waitlist.set(id, waitlistEntry);
-    return waitlistEntry;
+
+  async createConsultationRequest(insertRequest: InsertConsultationRequest): Promise<ConsultationRequest> {
+    const id = this.currentConsultationId++;
+    const request: ConsultationRequest = { ...insertRequest, id };
+    this.consultationRequests.set(id, request);
+    return request;
   }
-  
-  async getWaitlistEntries(): Promise<WaitlistEntry[]> {
-    return Array.from(this.waitlist.values());
-  }
-  
-  async getWaitlistEntryByEmail(email: string): Promise<WaitlistEntry | undefined> {
-    return Array.from(this.waitlist.values()).find(
-      (entry) => entry.email === email,
-    );
+
+  async getConsultationRequests(): Promise<ConsultationRequest[]> {
+    return Array.from(this.consultationRequests.values());
   }
 }
 

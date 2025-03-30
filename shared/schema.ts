@@ -8,13 +8,15 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
-export const waitlistEntries = pgTable("waitlist_entries", {
+export const consultationRequests = pgTable("consultation_requests", {
   id: serial("id").primaryKey(),
-  email: text("email").notNull().unique(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
   company: text("company"),
-  companySize: text("company_size"),
-  wantsUpdates: boolean("wants_updates").default(false),
-  createdAt: text("created_at").notNull(),
+  serviceOfInterest: text("service_of_interest").notNull(),
+  message: text("message"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -22,17 +24,18 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
-export const insertWaitlistSchema = createInsertSchema(waitlistEntries).pick({
+export const insertConsultationRequestSchema = createInsertSchema(consultationRequests).pick({
+  firstName: true,
+  lastName: true,
   email: true,
+  phone: true,
   company: true,
-  companySize: true,
-  wantsUpdates: true,
-}).extend({
-  email: z.string().email("Please enter a valid email address"),
+  serviceOfInterest: true,
+  message: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
-export type InsertWaitlist = z.infer<typeof insertWaitlistSchema>;
-export type WaitlistEntry = typeof waitlistEntries.$inferSelect;
+export type InsertConsultationRequest = z.infer<typeof insertConsultationRequestSchema>;
+export type ConsultationRequest = typeof consultationRequests.$inferSelect;
